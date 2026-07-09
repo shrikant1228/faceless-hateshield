@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime      @default(now())
+  isAdmin      Boolean       @default(false)
+  ownedArenas  Arena[]       @relation("ArenaMaster")
+  arenaMembers ArenaMember[]
+}
+
+model Arena {
+  id               String        @id @default(cuid())
+  name             String
+  code             String        @unique
+  masterId         String
+  nextPlayerNumber Int           @default(1)
+  createdAt        DateTime      @default(now())
+  master           User          @relation("ArenaMaster", fields: [masterId], references: [id])
+  members          ArenaMember[]
+  messages         Message[]
+}
+
+model ArenaMember {
+  id           String       @id @default(cuid())
+  arenaId      String
+  userId       String
+  playerNumber Int
+  isMaster     Boolean      @default(false)
+  status       MemberStatus @default(ACTIVE)
+  strikes      Int          @default(0)
+  joinedAt     DateTime     @default(now())
+  arena        Arena        @relation(fields: [arenaId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id])
+  messages     Message[]
+
+  @@unique([arenaId, userId])
+  @@unique([arenaId, playerNumber])
+}
+
+model Message {
+  id             String      @id @default(cuid())
+  arenaId        String
+  memberId       String
+  content        String
+  isBlurred      Boolean     @default(false)
+  toxicityScore  Float?
+  toxicityLabels String[]    @default([])
+  createdAt      DateTime    @default(now())
+  imageUrl       String?
+  arena          Arena       @relation(fields: [arenaId], references: [id], onDelete: Cascade)
+  member         ArenaMember @relation(fields: [memberId], references: [id])
+}
+
+enum MemberStatus {
+  ACTIVE
+  BANNED
+  EXITED
+}

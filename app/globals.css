@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600&display=swap");
+
+body {
+  background-color: #0b0d12;
+  color: #e7e9ee;
+  font-family: "Inter", sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(61, 255, 178, 0.06), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(255, 77, 106, 0.05), transparent 40%);
+  background-attachment: fixed;
+}
+
+.player-tag {
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+.scanline {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.blurred-content {
+  filter: blur(6px);
+  user-select: none;
+  transition: filter 0.15s ease;
+}
+
+.blurred-content:hover {
+  filter: blur(3px);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0d12;
+}
+::-webkit-scrollbar-thumb {
+  background: #20242f;
+  border-radius: 4px;
+}
