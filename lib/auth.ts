@@ -31,7 +31,7 @@ export function verifyToken(token: string): TokenPayload | null {
   }
 }
 
-// Reads the auth cookie from an incoming API route request
+// ✅ This function is synchronous - it just reads the cookie
 export function getTokenFromRequest(req: NextRequest): TokenPayload | null {
   const token = req.cookies.get(COOKIE_NAME)?.value;
   if (!token) return null;

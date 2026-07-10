@@ -5,22 +5,29 @@ import { getTokenFromRequest } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const user = getTokenFromRequest(req);
-  if (!user) return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+  try {
+    const user = getTokenFromRequest(req);
+    if (!user) {
+      return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+    }
 
-  const memberships = await prisma.arenaMember.findMany({
-    where: { userId: user.userId, status: { in: ["ACTIVE"] } },
-    include: { arena: { select: { id: true, name: true, code: true } } },
-    orderBy: { joinedAt: "desc" },
-  });
+    const memberships = await prisma.arenaMember.findMany({
+      where: { userId: user.userId, status: { in: ["ACTIVE"] } },
+      include: { arena: { select: { id: true, name: true, code: true } } },
+      orderBy: { joinedAt: "desc" },
+    });
 
-  return NextResponse.json({
-    arenas: memberships.map((m) => ({
-      id: m.arena.id,
-      name: m.arena.name,
-      code: m.arena.code,
-      playerNumber: m.playerNumber,
-      isMaster: m.isMaster,
-    })),
-  });
+    return NextResponse.json({
+      arenas: memberships.map((m) => ({
+        id: m.arena.id,
+        name: m.arena.name,
+        code: m.arena.code,
+        playerNumber: m.playerNumber,
+        isMaster: m.isMaster,
+      })),
+    });
+  } catch (error) {
+    console.error("Error in arena/mine:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
 }

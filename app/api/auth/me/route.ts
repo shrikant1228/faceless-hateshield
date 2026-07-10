@@ -6,12 +6,14 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
+    // ✅ Get the token BEFORE any async operations
     const payload = getTokenFromRequest(req);
+    
     if (!payload) {
       return NextResponse.json({ user: null });
     }
 
-    // Get the full user from database to check isAdmin
+    // ✅ Now do the async database query
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
       select: {
