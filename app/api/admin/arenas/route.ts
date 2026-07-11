@@ -6,22 +6,20 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    // ✅ Read token first
     const user = getTokenFromRequest(req);
     if (!user) {
       return NextResponse.json({ error: "Not logged in" }, { status: 401 });
     }
-    
-    // ✅ Then do async operations
+
     const dbUser = await prisma.user.findUnique({
       where: { id: user.userId },
       select: { isAdmin: true }
     });
-    
+
     if (!dbUser?.isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
-    
+
     const arenas = await prisma.arena.findMany({
       include: {
         members: true,
@@ -32,7 +30,7 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { createdAt: "desc" }
     });
-    
+
     return NextResponse.json({ arenas });
   } catch (error) {
     console.error("Error in admin/arenas:", error);

@@ -10,16 +10,16 @@ export async function GET(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Not logged in" }, { status: 401 });
     }
-    
+
     const dbUser = await prisma.user.findUnique({
       where: { id: user.userId },
       select: { isAdmin: true }
     });
-    
+
     if (!dbUser?.isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
-    
+
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { createdAt: "desc" }
     });
-    
+
     return NextResponse.json({ users });
   } catch (error) {
     console.error("Error in admin/users:", error);
