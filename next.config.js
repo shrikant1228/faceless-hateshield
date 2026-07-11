@@ -6,6 +6,11 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = { ...config.resolve.fallback, fs: false, path: false };
     }
+    // ✅ Yeh line add karo - alias for @
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': __dirname,
+    };
     return config;
   },
 };
